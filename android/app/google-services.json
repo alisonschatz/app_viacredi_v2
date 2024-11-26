@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "707246097288",
+    "project_id": "app-teste-viacredi",
+    "storage_bucket": "app-teste-viacredi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707246097288:android:ec63e0c61c396147ee703d",
+        "android_client_info": {
+          "package_name": "br.grupovex.viacrediteste"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfB1HAonXkUvZ0KF1XO1HlVWfV7rGgiaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

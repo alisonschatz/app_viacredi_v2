@@ -1,4 +1,4 @@
-import 'package:app_viacredi_v1/pages/success_screen.dart';
+import 'package:app_viacredi_v2/pages/success_screen.dart';
 import 'package:flutter/material.dart';
 import '../widgets/background_container.dart';
 

@@ -1,4 +1,4 @@
-import 'package:app_viacredi_v1/pages/cpf_screen.dart';
+import 'package:app_viacredi_v2/pages/cpf_screen.dart';
 import 'package:flutter/material.dart';
 
 class StarRatingScreen extends StatefulWidget {
