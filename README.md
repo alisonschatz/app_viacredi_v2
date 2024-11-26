@@ -25,7 +25,7 @@ Este aplicativo móvel, desenvolvido em Flutter, simula a experiência de um tot
 ### Passos para Execução
 1. **Clonar o Repositório**:
    ```bash
-   git clone https://github.com/alisonschatz/app_viacredi_v1
+   git clone https://github.com/alisonschatz/app_viacredi_v2
 
 
 2. **Instalar as Dependências:**:
