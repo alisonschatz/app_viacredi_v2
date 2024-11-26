@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:app_viacredi_v1/screens/rating_screen.dart';
 

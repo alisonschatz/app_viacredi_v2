@@ -58,11 +58,11 @@ class CommentScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
+                    horizontal: 30,
                     vertical: 15,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(35),
                   ),
                 ),
                 child: const Text(
