@@ -1,6 +1,8 @@
-import 'package:app_viacredi_v2/pages/comment_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/feedback_provider.dart';
 import '../widgets/background_container.dart';
+import 'comment_screen.dart';
 
 class NumpadScreen extends StatefulWidget {
   const NumpadScreen({super.key});
@@ -44,130 +46,160 @@ class _NumpadScreenState extends State<NumpadScreen> {
     return formatted;
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BackgroundContainer(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 400,
-                child: Column(
-                  children: [
-                    // CPF Display
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+    return Consumer<FeedbackProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          body: BackgroundContainer(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final maxWidth = constraints.maxWidth;
+                final maxHeight = constraints.maxHeight;
+                
+                // Calculando o tamanho ideal do numpad baseado no tamanho da tela
+                final numpadWidth = maxWidth > 600 ? 400.0 : maxWidth * 0.9;
+                final buttonWidth = numpadWidth / 5; // Largura do botão
+                final buttonHeight = buttonWidth * 0.6; // Altura do botão (60% da largura)
+
+                return Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 120),
+                        SizedBox(
+                          width: numpadWidth,
+                          child: Column(
+                            children: [
+                              // CPF Display
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: buttonHeight * 0.3,
+                                  horizontal: buttonWidth * 0.25,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.blue, width: 2),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Text(
+                                  formatCPF(cpf),
+                                  style: TextStyle(
+                                    fontSize: buttonHeight * 0.6,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              
+                              // Numpad Container
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(buttonHeight * 0.2),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.blue, width: 2),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    for (var i = 0; i < 3; i++)
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(vertical: buttonHeight * 0.1),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            for (var j = 1; j <= 3; j++)
+                                              _buildNumpadButton(
+                                                '${(i * 3) + j}',
+                                                width: buttonWidth,
+                                                height: buttonHeight,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: buttonHeight * 0.1),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          SizedBox(width: buttonWidth, height: buttonHeight),
+                                          _buildNumpadButton('0', width: buttonWidth, height: buttonHeight),
+                                          _buildNumpadButton('⌫', width: buttonWidth, height: buttonHeight, isBackspace: true),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        color: Colors.white,
-                      ),
-                      child: Text(
-                        formatCPF(cpf),
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,  // Made text blue
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    
-                    // Numpad Container
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue, width: 2),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (var i = 0; i < 3; i++)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  for (var j = 1; j <= 3; j++)
-                                    _buildNumpadButton('${(i * 3) + j}'),
-                                ],
+                        SizedBox(height: maxHeight * 0.05),
+                        // Submit Button
+                        SizedBox(
+                          width: numpadWidth * 0.7,
+                          height: buttonHeight * 1.2,
+                          child: ElevatedButton(
+                            onPressed: cpf.length == 11
+                                ? () {
+                                    provider.setCpf(cpf);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const CommentScreen(),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
                               ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const SizedBox(width: 80, height: 60),
-                                _buildNumpadButton('0'),
-                                _buildNumpadButton('⌫', isBackspace: true),
-                              ],
+                            child: Text(
+                              'Enviar',
+                              style: TextStyle(
+                                fontSize: buttonHeight * 0.4,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Submit Button
-              ElevatedButton(
-                onPressed: cpf.length == 11
-                    ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CommentScreen(),
-                          ),
-                        );
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 15,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  disabledBackgroundColor: Colors.grey,
-                ),
-                child: const Text(
-                  'Enviar',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildNumpadButton(String text, {bool isBackspace = false}) {
+  Widget _buildNumpadButton(
+    String text, {
+    required double width,
+    required double height,
+    bool isBackspace = false,
+  }) {
     return SizedBox(
-      width: 80,
-      height: 60,
+      width: width,
+      height: height,
       child: ElevatedButton(
         onPressed: () {
           if (isBackspace) {
@@ -185,13 +217,12 @@ class _NumpadScreenState extends State<NumpadScreen> {
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            fontSize: 28,
+          style: TextStyle(
+            fontSize: height * 0.5,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
       ),
     );
-  }
-}
+  }}

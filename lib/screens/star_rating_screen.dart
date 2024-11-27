@@ -1,5 +1,7 @@
-import 'package:app_viacredi_v2/pages/cpf_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/feedback_provider.dart';
+import 'cpf_screen.dart';
 
 class StarRatingScreen extends StatefulWidget {
   const StarRatingScreen({super.key});
@@ -15,82 +17,84 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
     'Tempo de espera': 0,
   };
 
-  final Map<String, int> hoverRatings = {
-    'Ambiente do Posto de Atendimento': 0,
-    'Atendimento dos colaboradores': 0,
-    'Tempo de espera': 0,
-  };
-
   bool get canProceed => ratings.values.every((rating) => rating > 0);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/img/totem/bg.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              right: -20,
-              child: Image.asset(
-                'assets/img/totem/desenho.png',
-                height: 180,
+    return Consumer<FeedbackProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          body: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/img/totem/bg.png'),
+                fit: BoxFit.cover,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildStarRatingSection('Ambiente do Posto de Atendimento'),
-                  const SizedBox(height: 50), // Increased spacing
-                  _buildStarRatingSection('Atendimento dos colaboradores'),
-                  const SizedBox(height: 50), // Increased spacing
-                  _buildStarRatingSection('Tempo de espera'),
-                  const SizedBox(height: 60), // Increased spacing
-                  ElevatedButton(
-                    onPressed: canProceed
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CpfScreen(),
-                              ),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40, // Increased padding
-                        vertical: 20, // Increased padding
-                      ),
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(35), // Increased radius
-                      ),
-                      disabledBackgroundColor: Colors.grey,
-                    ),
-                    child: const Text(
-                      'Enviar',
-                      style: TextStyle(
-                        fontSize: 28, // Increased font size
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  right: -20,
+                  child: Image.asset(
+                    'assets/img/totem/desenho.png',
+                    height: 180,
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildStarRatingSection('Ambiente do Posto de Atendimento'),
+                      const SizedBox(height: 50),
+                      _buildStarRatingSection('Atendimento dos colaboradores'),
+                      const SizedBox(height: 50),
+                      _buildStarRatingSection('Tempo de espera'),
+                      const SizedBox(height: 60),
+                      ElevatedButton(
+                        onPressed: canProceed
+                            ? () {
+                                // Update ratings in provider before navigating
+                                ratings.forEach((key, value) {
+                                  provider.setStarRating(key, value);
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CpfScreen(),
+                                  ),
+                                );
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 50,
+                            vertical: 20,
+                          ),
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          disabledBackgroundColor: Colors.grey,
+                        ),
+                        child: const Text(
+                          'Enviar',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -100,12 +104,12 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 26, // Increased font size
+            fontSize: 26,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 20), // Increased spacing
+        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
@@ -113,13 +117,15 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
             (index) => MouseRegion(
               onEnter: (_) {
                 setState(() {
-                  hoverRatings[title] = index + 1;
+                  ratings[title] = index + 1;
                 });
               },
               onExit: (_) {
-                setState(() {
-                  hoverRatings[title] = 0;
-                });
+                if (ratings[title] == 0) {
+                  setState(() {
+                    ratings[title] = 0;
+                  });
+                }
               },
               child: GestureDetector(
                 onTap: () {
@@ -127,28 +133,27 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
                     ratings[title] = index + 1;
                   });
                 },
-                child: TweenAnimationBuilder<double>(
-                  duration: const Duration(milliseconds: 200),
-                  tween: Tween<double>(
-                    begin: 1.0,
-                    end: _shouldHighlight(title, index) ? 1.2 : 1.0,
-                  ),
-                  builder: (context, scale, child) {
-                    return Transform.scale(
-                      scale: scale,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8, // Increased padding
-                          vertical: 4,
-                        ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 200),
+                    tween: Tween<double>(
+                      begin: 1.0,
+                      end: ratings[title]! > index ? 1.2 : 1.0,
+                    ),
+                    builder: (context, scale, child) {
+                      return Transform.scale(
+                        scale: scale,
                         child: Image.asset(
-                          _getStarImage(title, index),
-                          width: 60, // Increased star size
-                          height: 60, // Increased star size
+                          ratings[title]! > index
+                              ? 'assets/img/totem/estrela_active.png'
+                              : 'assets/img/totem/starlight.png',
+                          width: 60,
+                          height: 60,
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -156,23 +161,5 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
         ),
       ],
     );
-  }
-
-  bool _shouldHighlight(String title, int index) {
-    if (hoverRatings[title]! > 0) {
-      return index < hoverRatings[title]!;
-    }
-    return false;
-  }
-
-  String _getStarImage(String title, int index) {
-    if (hoverRatings[title]! > 0) {
-      return index < hoverRatings[title]!
-          ? 'assets/img/totem/estrela_active.png'
-          : 'assets/img/totem/starlight.png';
-    }
-    return ratings[title]! > index
-        ? 'assets/img/totem/estrela_active.png'
-        : 'assets/img/totem/starlight.png';
   }
 }

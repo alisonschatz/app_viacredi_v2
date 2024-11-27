@@ -1,5 +1,5 @@
-import 'package:app_viacredi_v2/pages/comment_screen.dart';
-import 'package:app_viacredi_v2/pages/numpad_screen.dart';
+import 'package:app_viacredi_v2/screens/comment_screen.dart';
+import 'package:app_viacredi_v2/screens/numpad_screen.dart';
 import 'package:flutter/material.dart';
 import '../widgets/background_container.dart';
 
@@ -18,12 +18,12 @@ class CpfScreen extends StatelessWidget {
               const Text(
                 'Gostaria de informar seu CPF?',
                 style: TextStyle(
-                  fontSize: 62, // Increased font size
+                  fontSize: 62, 
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 60), // Increased spacing
+              const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -38,7 +38,7 @@ class CpfScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 100), // Increased spacing between buttons
+                  const SizedBox(width: 100), //spacing between buttons
                   _buildOptionButton(
                     context,
                     'Não',
@@ -66,14 +66,14 @@ class CpfScreen extends StatelessWidget {
     VoidCallback onPressed,
   ) {
     return SizedBox(
-      width: 180, // Increased button width
-      height: 80,  // Increased button height
+      width: 180, //button width
+      height: 80,  //button height
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(35), // Increased border radius
+            borderRadius: BorderRadius.circular(35),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: 0,
@@ -83,9 +83,9 @@ class CpfScreen extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            fontSize: 32, // Increased font size
-            fontWeight: FontWeight.bold, // Made text bold
-            color: Colors.white, // Explicit white color
+            fontSize: 32, 
+            fontWeight: FontWeight.bold, 
+            color: Colors.white,
           ),
         ),
       ),
