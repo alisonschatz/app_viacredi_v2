@@ -69,6 +69,7 @@ flutter:
   - assets/img/totem/desenho.png
   - assets/img/totem/estrela_active.png
   - assets/img/totem/starlight.png
+  - assets/img/dash/favicon.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
