@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/background_container.dart';
 import '../services/inactivity_timer_service.dart';
+import '../providers/feedback_provider.dart';
 import 'success_screen.dart';
 import 'numpad_screen.dart';
 
@@ -34,14 +36,30 @@ class _CpfScreenState extends State<CpfScreen> {
     );
   }
 
-  void _navigateToSuccess() {
+  Future<void> _skipAndNavigateToSuccess() async {
     _resetTimer();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SuccessScreen(),
-      ),
-    );
+    final provider = Provider.of<FeedbackProvider>(context, listen: false);
+    
+    try {
+      await provider.submitFeedback();
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SuccessScreen(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao salvar feedback: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -79,7 +97,7 @@ class _CpfScreenState extends State<CpfScreen> {
                       context,
                       'Não',
                       Colors.orange,
-                      _navigateToSuccess,
+                      _skipAndNavigateToSuccess,
                     ),
                   ],
                 ),
