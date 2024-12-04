@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/feedback_provider.dart';
 import '../widgets/background_container.dart';
+import '../services/inactivity_timer_service.dart';
 import 'star_rating_screen.dart';
 
 class RatingScreen extends StatefulWidget {
@@ -14,95 +15,113 @@ class RatingScreen extends StatefulWidget {
 class _RatingScreenState extends State<RatingScreen> {
   int? selectedRating;
 
+  void _resetTimer() {
+    InactivityTimerService().resetTimer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetTimer();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FeedbackProvider>(
       builder: (context, provider, child) {
-        return Scaffold(
-          body: BackgroundContainer(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Em uma escala de 0 a 10 o quanto você indicaria a experiência de hoje para amigos e familiares?',
-                    style: TextStyle(
-                      fontSize: 44, 
-                      fontWeight: FontWeight.bold
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 11,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                    ),
-                    itemCount: 11,
-                    itemBuilder: (context, index) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedRating = index;
-                          });
-                          provider.setNpsRating(index);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selectedRating == index 
-                              ? Colors.blue.shade700
-                              : _getColorForRating(index),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.zero,
-                        ),
-                        child: Text(
-                          index.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: selectedRating != null
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const StarRatingScreen(),
-                              ),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 50,
-                        vertical: 15,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      disabledBackgroundColor: Colors.grey,
-                    ),
-                    child: const Text(
-                      'Enviar',
+        return GestureDetector(
+          onTapDown: (_) => _resetTimer(),
+          behavior: HitTestBehavior.translucent,
+          child: Scaffold(
+            body: BackgroundContainer(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Em uma escala de 0 a 10 o quanto você indicaria a experiência de hoje para amigos e familiares?',
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 44, 
+                        fontWeight: FontWeight.bold
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 11,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
+                      itemCount: 11,
+                      itemBuilder: (context, index) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            _resetTimer();
+                            setState(() {
+                              selectedRating = index;
+                            });
+                            provider.setNpsRating(index);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selectedRating == index 
+                                ? Colors.blue.shade700
+                                : _getColorForRating(index),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: Text(
+                            index.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: selectedRating != null
+                          ? () {
+                              _resetTimer();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const StarRatingScreen(),
+                                ),
+                              );
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 15,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        disabledBackgroundColor: Colors.grey,
+                      ),
+                      child: const Text(
+                        'Enviar',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

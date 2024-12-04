@@ -1,58 +1,86 @@
-import 'package:app_viacredi_v2/screens/comment_screen.dart';
-import 'package:app_viacredi_v2/screens/numpad_screen.dart';
 import 'package:flutter/material.dart';
 import '../widgets/background_container.dart';
+import '../services/inactivity_timer_service.dart';
+import 'comment_screen.dart';
+import 'numpad_screen.dart';
 
-class CpfScreen extends StatelessWidget {
+class CpfScreen extends StatefulWidget {
   const CpfScreen({super.key});
 
   @override
+  State<CpfScreen> createState() => _CpfScreenState();
+}
+
+class _CpfScreenState extends State<CpfScreen> {
+  void _resetTimer() {
+    InactivityTimerService().resetTimer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetTimer();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BackgroundContainer(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Gostaria de informar seu CPF?',
-                style: TextStyle(
-                  fontSize: 62, 
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTapDown: (_) => _resetTimer(),
+      behavior: HitTestBehavior.translucent,
+      child: Scaffold(
+        body: BackgroundContainer(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Gostaria de informar seu CPF?',
+                  style: TextStyle(
+                    fontSize: 62, 
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildOptionButton(
-                    context,
-                    'Sim',
-                    Colors.green,
-                    () => Navigator.push(
+                const SizedBox(height: 60),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildOptionButton(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const NumpadScreen(),
-                      ),
+                      'Sim',
+                      Colors.green,
+                      () {
+                        _resetTimer();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const NumpadScreen(),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                  const SizedBox(width: 100), //spacing between buttons
-                  _buildOptionButton(
-                    context,
-                    'Não',
-                    Colors.orange,
-                    () => Navigator.push(
+                    const SizedBox(width: 100), //spacing between buttons
+                    _buildOptionButton(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const CommentScreen(),
-                      ),
+                      'Não',
+                      Colors.orange,
+                      () {
+                        _resetTimer();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CommentScreen(),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

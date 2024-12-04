@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/feedback_provider.dart';
+import '../services/inactivity_timer_service.dart';
 import '../widgets/background_container.dart';
 import 'success_screen.dart';
 
@@ -14,6 +15,18 @@ class CommentScreen extends StatefulWidget {
 class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   bool _isSubmitting = false;
+
+  void _resetTimer() {
+    InactivityTimerService().resetTimer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetTimer();
+    });
+  }
 
   @override
   void dispose() {
@@ -31,6 +44,7 @@ class _CommentScreenState extends State<CommentScreen> {
   }
 
   Future<void> _handleSubmit(BuildContext context, FeedbackProvider provider) async {
+    _resetTimer();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     
     setState(() {
@@ -62,110 +76,115 @@ class _CommentScreenState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     return Consumer<FeedbackProvider>(
       builder: (context, provider, child) {
-        return Scaffold(
-          body: BackgroundContainer(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 120),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const SizedBox(width: 300),
-                              SizedBox(
-                                width: 250,
-                                child: ElevatedButton(
-                                  onPressed: _isSubmitting 
-                                      ? null 
-                                      : () => _handleSubmit(context, provider),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25),
+        return GestureDetector(
+          onTapDown: (_) => _resetTimer(),
+          behavior: HitTestBehavior.translucent,
+          child: Scaffold(
+            body: BackgroundContainer(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 120),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const SizedBox(width: 300),
+                                SizedBox(
+                                  width: 250,
+                                  child: ElevatedButton(
+                                    onPressed: _isSubmitting 
+                                        ? null 
+                                        : () => _handleSubmit(context, provider),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 0,
+                                      ),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 0,
-                                    ),
+                                    child: _isSubmitting
+                                        ? const SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Finalizar comentário',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                   ),
-                                  child: _isSubmitting
-                                      ? const SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Finalizar comentário',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Text(
-                          'Deixe seu comentário',
-                          style: TextStyle(
-                            fontSize: 44,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
-                        Container(
-                          constraints: const BoxConstraints(
-                            maxWidth: 1200,
-                          ),
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.blue, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: _commentController,
-                            maxLines: 6,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.black87,
+                              ],
                             ),
-                            decoration: const InputDecoration(
-                              hintText: 'Digite seu comentário aqui...',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              contentPadding: EdgeInsets.all(20),
-                              border: InputBorder.none,
-                            ),
-                            onChanged: (value) {
-                              provider.setComment(value);
-                            },
                           ),
-                        ),
-                      ],
+                          const Text(
+                            'Deixe seu comentário',
+                            style: TextStyle(
+                              fontSize: 44,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            constraints: const BoxConstraints(
+                              maxWidth: 1200,
+                            ),
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.blue, width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: _commentController,
+                              maxLines: 6,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.black87,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: 'Digite seu comentário aqui...',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.all(20),
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                _resetTimer();
+                                provider.setComment(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/feedback_provider.dart';
+import '../services/inactivity_timer_service.dart';
 import '../widgets/background_container.dart';
 import 'comment_screen.dart';
 
@@ -14,7 +15,20 @@ class NumpadScreen extends StatefulWidget {
 class _NumpadScreenState extends State<NumpadScreen> {
   String cpf = '';
 
+  void _resetTimer() {
+    InactivityTimerService().resetTimer();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetTimer();
+    });
+  }
+
   void addNumber(String number) {
+    _resetTimer();
     if (cpf.length < 11) {
       setState(() {
         cpf += number;
@@ -23,6 +37,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
   }
 
   void removeNumber() {
+    _resetTimer();
     if (cpf.isNotEmpty) {
       setState(() {
         cpf = cpf.substring(0, cpf.length - 1);
@@ -46,144 +61,143 @@ class _NumpadScreenState extends State<NumpadScreen> {
     return formatted;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<FeedbackProvider>(
       builder: (context, provider, child) {
-        return Scaffold(
-          body: BackgroundContainer(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final maxWidth = constraints.maxWidth;
-                final maxHeight = constraints.maxHeight;
-                
-                // Calculando o tamanho ideal do numpad baseado no tamanho da tela
-                final numpadWidth = maxWidth > 600 ? 400.0 : maxWidth * 0.9;
-                final buttonWidth = numpadWidth / 5; // Largura do botão
-                final buttonHeight = buttonWidth * 0.6; // Altura do botão (60% da largura)
+        return GestureDetector(
+          onTapDown: (_) => _resetTimer(),
+          behavior: HitTestBehavior.translucent,
+          child: Scaffold(
+            body: BackgroundContainer(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxWidth = constraints.maxWidth;
+                  final maxHeight = constraints.maxHeight;
+                  
+                  final numpadWidth = maxWidth > 600 ? 400.0 : maxWidth * 0.9;
+                  final buttonWidth = numpadWidth / 5;
+                  final buttonHeight = buttonWidth * 0.6;
 
-                return Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 120),
-                        SizedBox(
-                          width: numpadWidth,
-                          child: Column(
-                            children: [
-                              // CPF Display
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: buttonHeight * 0.3,
-                                  horizontal: buttonWidth * 0.25,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.blue, width: 2),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 120),
+                          SizedBox(
+                            width: numpadWidth,
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: buttonHeight * 0.3,
+                                    horizontal: buttonWidth * 0.25,
                                   ),
-                                  color: Colors.white,
-                                ),
-                                child: Text(
-                                  formatCPF(cpf),
-                                  style: TextStyle(
-                                    fontSize: buttonHeight * 0.6,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.blue, width: 2),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                    color: Colors.white,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              
-                              // Numpad Container
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(buttonHeight * 0.2),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.blue, width: 2),
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(20),
-                                    bottomRight: Radius.circular(20),
+                                  child: Text(
+                                    formatCPF(cpf),
+                                    style: TextStyle(
+                                      fontSize: buttonHeight * 0.6,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  color: Colors.white,
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    for (var i = 0; i < 3; i++)
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(buttonHeight * 0.2),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.blue, width: 2),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      for (var i = 0; i < 3; i++)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: buttonHeight * 0.1),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              for (var j = 1; j <= 3; j++)
+                                                _buildNumpadButton(
+                                                  '${(i * 3) + j}',
+                                                  width: buttonWidth,
+                                                  height: buttonHeight,
+                                                ),
+                                            ],
+                                          ),
+                                        ),
                                       Padding(
-                                        padding: EdgeInsets.symmetric(vertical: buttonHeight * 0.1),
+                                        padding: EdgeInsets.only(top: buttonHeight * 0.1),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            for (var j = 1; j <= 3; j++)
-                                              _buildNumpadButton(
-                                                '${(i * 3) + j}',
-                                                width: buttonWidth,
-                                                height: buttonHeight,
-                                              ),
+                                            SizedBox(width: buttonWidth, height: buttonHeight),
+                                            _buildNumpadButton('0', width: buttonWidth, height: buttonHeight),
+                                            _buildNumpadButton('⌫', width: buttonWidth, height: buttonHeight, isBackspace: true),
                                           ],
                                         ),
                                       ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: buttonHeight * 0.1),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          SizedBox(width: buttonWidth, height: buttonHeight),
-                                          _buildNumpadButton('0', width: buttonWidth, height: buttonHeight),
-                                          _buildNumpadButton('⌫', width: buttonWidth, height: buttonHeight, isBackspace: true),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: maxHeight * 0.05),
+                          SizedBox(
+                            width: numpadWidth * 0.7,
+                            height: buttonHeight * 1.2,
+                            child: ElevatedButton(
+                              onPressed: cpf.length == 11
+                                  ? () {
+                                      _resetTimer();
+                                      provider.setCpf(cpf);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const CommentScreen(),
+                                        ),
+                                      );
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: maxHeight * 0.05),
-                        // Submit Button
-                        SizedBox(
-                          width: numpadWidth * 0.7,
-                          height: buttonHeight * 1.2,
-                          child: ElevatedButton(
-                            onPressed: cpf.length == 11
-                                ? () {
-                                    provider.setCpf(cpf);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const CommentScreen(),
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                            child: Text(
-                              'Enviar',
-                              style: TextStyle(
-                                fontSize: buttonHeight * 0.4,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                              child: Text(
+                                'Enviar',
+                                style: TextStyle(
+                                  fontSize: buttonHeight * 0.4,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -202,6 +216,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
       height: height,
       child: ElevatedButton(
         onPressed: () {
+          _resetTimer();
           if (isBackspace) {
             removeNumber();
           } else {
@@ -225,4 +240,5 @@ class _NumpadScreenState extends State<NumpadScreen> {
         ),
       ),
     );
-  }}
+  }
+}
