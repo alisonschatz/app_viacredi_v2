@@ -5,6 +5,39 @@ import '../services/inactivity_timer_service.dart';
 import '../widgets/background_container.dart';
 import 'comment_screen.dart';
 
+bool isCPFValid(String cpf) {
+  // Remove caracteres não numéricos
+  cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
+
+  // Verifica se tem 11 dígitos
+  if (cpf.length != 11) return false;
+
+  // Verifica se todos os dígitos são iguais
+  if (RegExp(r'^(\d)\1*$').hasMatch(cpf)) return false;
+
+  // Calcula primeiro dígito verificador
+  int sum = 0;
+  for (int i = 0; i < 9; i++) {
+    sum += int.parse(cpf[i]) * (10 - i);
+  }
+  int digit1 = 11 - (sum % 11);
+  if (digit1 > 9) digit1 = 0;
+
+  // Verifica primeiro dígito
+  if (digit1 != int.parse(cpf[9])) return false;
+
+  // Calcula segundo dígito verificador
+  sum = 0;
+  for (int i = 0; i < 10; i++) {
+    sum += int.parse(cpf[i]) * (11 - i);
+  }
+  int digit2 = 11 - (sum % 11);
+  if (digit2 > 9) digit2 = 0;
+
+  // Verifica segundo dígito
+  return digit2 == int.parse(cpf[10]);
+}
+
 class NumpadScreen extends StatefulWidget {
   const NumpadScreen({super.key});
 
@@ -59,6 +92,35 @@ class _NumpadScreenState extends State<NumpadScreen> {
       formatted = '${formatted.substring(0, 11)}-${formatted.substring(11)}';
     }
     return formatted;
+  }
+
+  void _validateAndProceed(FeedbackProvider provider) {
+    if (!isCPFValid(cpf)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('CPF inválido. Por favor, digite novamente.'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      setState(() {
+        cpf = '';
+      });
+      return;
+    }
+
+    provider.setCpf(cpf);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CommentScreen(),
+      ),
+    );
   }
 
   @override
@@ -167,13 +229,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
                               onPressed: cpf.length == 11
                                   ? () {
                                       _resetTimer();
-                                      provider.setCpf(cpf);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const CommentScreen(),
-                                        ),
-                                      );
+                                      _validateAndProceed(provider);
                                     }
                                   : null,
                               style: ElevatedButton.styleFrom(

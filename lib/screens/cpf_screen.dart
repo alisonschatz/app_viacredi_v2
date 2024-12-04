@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/background_container.dart';
 import '../services/inactivity_timer_service.dart';
-import 'comment_screen.dart';
+import 'success_screen.dart';
 import 'numpad_screen.dart';
 
 class CpfScreen extends StatefulWidget {
@@ -22,6 +22,26 @@ class _CpfScreenState extends State<CpfScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _resetTimer();
     });
+  }
+
+  void _navigateToNumpad() {
+    _resetTimer();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NumpadScreen(),
+      ),
+    );
+  }
+
+  void _navigateToSuccess() {
+    _resetTimer();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SuccessScreen(),
+      ),
+    );
   }
 
   @override
@@ -52,30 +72,14 @@ class _CpfScreenState extends State<CpfScreen> {
                       context,
                       'Sim',
                       Colors.green,
-                      () {
-                        _resetTimer();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NumpadScreen(),
-                          ),
-                        );
-                      },
+                      _navigateToNumpad,
                     ),
-                    const SizedBox(width: 100), //spacing between buttons
+                    const SizedBox(width: 100),
                     _buildOptionButton(
                       context,
                       'Não',
                       Colors.orange,
-                      () {
-                        _resetTimer();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CommentScreen(),
-                          ),
-                        );
-                      },
+                      _navigateToSuccess,
                     ),
                   ],
                 ),
@@ -94,8 +98,8 @@ class _CpfScreenState extends State<CpfScreen> {
     VoidCallback onPressed,
   ) {
     return SizedBox(
-      width: 180, //button width
-      height: 80,  //button height
+      width: 180,
+      height: 80,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
