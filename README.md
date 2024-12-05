@@ -42,5 +42,9 @@ O **Feedback_Viacredi** é um aplicativo móvel desenvolvido em **Flutter**, pro
 Os dados coletados são exibidos em um **dashboard** interativo, disponível em:  
 [Dashboard Viacredi](https://dashboard-viacredi.vercel.app)  
 
+**🗝️ Credenciais de Acesso ao Dashboard:**  
+- **Usuário:** admin@viacredi.com.br  
+- **Senha:** viacredi  
+
 📁 **Repositório do Dashboard**  
-Para mais detalhes sobre o dashboard, visite o repositório: [dashboard_viacredi](https://github.com/alisonschatz/dashboard_viacredi).  
+Para mais detalhes sobre o dashboard, visite o repositório: [dashboard_viacredi](https://github.com/alisonschatz/dashboard_viacredi)
