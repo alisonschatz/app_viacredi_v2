@@ -29,6 +29,14 @@ class _RatingScreenState extends State<RatingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+    final gridWidth = screenWidth > 1200 ? 1200.0 : screenWidth * 0.9;
+
+    final textSize = (screenWidth * 0.035).clamp(24.0, 44.0);
+    final contentPadding = (screenHeight * 0.02).clamp(20.0, 40.0);
+
     return Consumer<FeedbackProvider>(
       builder: (context, provider, child) {
         return GestureDetector(
@@ -36,91 +44,125 @@ class _RatingScreenState extends State<RatingScreen> {
           behavior: HitTestBehavior.translucent,
           child: Scaffold(
             body: BackgroundContainer(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Em uma escala de 0 a 10 o quanto você indicaria a experiência de hoje para amigos e familiares?',
-                      style: TextStyle(
-                        fontSize: 44, 
-                        fontWeight: FontWeight.bold
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 40),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 11,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                      ),
-                      itemCount: 11,
-                      itemBuilder: (context, index) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            _resetTimer();
-                            setState(() {
-                              selectedRating = index;
-                            });
-                            provider.setNpsRating(index);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: selectedRating == index 
-                                ? Colors.blue.shade700
-                                : _getColorForRating(index),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: gridWidth,
+                        constraints: BoxConstraints(
+                          maxWidth: 1200,
+                          minHeight: textSize * 3,
+                        ),
+                        padding: EdgeInsets.only(bottom: contentPadding),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: gridWidth),
+                            child: Text(
+                              'Em uma escala de 0 a 10 o quanto você indicaria a experiência de hoje para amigos e familiares?',
+                              style: TextStyle(
+                                fontSize: textSize,
+                                fontWeight: FontWeight.bold,
+                                height: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 40), // Aumentado espaçamento
+
+                      // Grid com altura aumentada
+                      SizedBox(
+                        width: gridWidth,
+                        height: 130, // Aumentada altura do grid
+                        child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 11,
+                            mainAxisSpacing: 8, // Aumentado espaçamento
+                            crossAxisSpacing: 8, // Aumentado espaçamento
+                            childAspectRatio: 1,
+                          ),
+                          itemCount: 11,
+                          itemBuilder: (context, index) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                _resetTimer();
+                                setState(() {
+                                  selectedRating = index;
+                                });
+                                provider.setNpsRating(index);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: selectedRating == index
+                                    ? Colors.blue.shade700
+                                    : _getColorForRating(index),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: EdgeInsets.zero,
+                              ),
+                              child: FittedBox(
+                                fit: BoxFit.contain,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0), // Aumentado padding
+                                  child: Text(
+                                    index.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 0), // Aumentado espaçamento
+
+                      SizedBox(
+                        width: gridWidth * 0.3,
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: selectedRating != null
+                              ? () {
+                                  _resetTimer();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const StarRatingScreen(),
+                                    ),
+                                  );
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            disabledBackgroundColor: Colors.grey,
                             padding: EdgeInsets.zero,
                           ),
-                          child: Text(
-                            index.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
+                          child: const Text(
+                            'Enviar',
+                            style: TextStyle(
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: selectedRating != null
-                          ? () {
-                              _resetTimer();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const StarRatingScreen(),
-                                ),
-                              );
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 15,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        disabledBackgroundColor: Colors.grey,
-                      ),
-                      child: const Text(
-                        'Enviar',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

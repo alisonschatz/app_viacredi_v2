@@ -64,44 +64,75 @@ class _CpfScreenState extends State<CpfScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+    final screenHeight = size.height;
+    final maxWidth = screenWidth > 1200 ? 1200.0 : screenWidth * 0.9;
+
+    // Cálculos responsivos
+    final titleSize = (screenWidth * 0.05).clamp(32.0, 62.0);
+    final buttonWidth = (screenWidth * 0.15).clamp(120.0, 180.0);
+    final buttonHeight = (screenHeight * 0.1).clamp(50.0, 80.0);
+    final buttonFontSize = (screenWidth * 0.025).clamp(20.0, 32.0);
+    final buttonSpacing = (screenWidth * 0.05).clamp(20.0, 100.0);
+    final verticalSpacing = (screenHeight * 0.06).clamp(30.0, 60.0);
+
     return GestureDetector(
       onTapDown: (_) => _resetTimer(),
       behavior: HitTestBehavior.translucent,
       child: Scaffold(
         body: BackgroundContainer(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Gostaria de informar seu CPF?',
-                  style: TextStyle(
-                    fontSize: 62, 
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 60),
-                Row(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05,
+                vertical: screenHeight * 0.02,
+              ),
+              child: Container(
+                width: maxWidth,
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildOptionButton(
-                      context,
-                      'Sim',
-                      Colors.green,
-                      _navigateToNumpad,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'Gostaria de informar seu CPF?',
+                        style: TextStyle(
+                          fontSize: titleSize,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    const SizedBox(width: 100),
-                    _buildOptionButton(
-                      context,
-                      'Não',
-                      Colors.orange,
-                      _skipAndNavigateToSuccess,
+                    SizedBox(height: verticalSpacing),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildOptionButton(
+                          context,
+                          'Sim',
+                          Colors.green,
+                          _navigateToNumpad,
+                          buttonWidth,
+                          buttonHeight,
+                          buttonFontSize,
+                        ),
+                        SizedBox(width: buttonSpacing),
+                        _buildOptionButton(
+                          context,
+                          'Não',
+                          Colors.orange,
+                          _skipAndNavigateToSuccess,
+                          buttonWidth,
+                          buttonHeight,
+                          buttonFontSize,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -114,10 +145,13 @@ class _CpfScreenState extends State<CpfScreen> {
     String text,
     Color color,
     VoidCallback onPressed,
+    double width,
+    double height,
+    double fontSize,
   ) {
     return SizedBox(
-      width: 180,
-      height: 80,
+      width: width,
+      height: height,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -125,17 +159,20 @@ class _CpfScreenState extends State<CpfScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(35),
           ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 0,
-            vertical: 0,
-          ),
+          padding: EdgeInsets.zero,
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 32, 
-            fontWeight: FontWeight.bold, 
-            color: Colors.white,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),

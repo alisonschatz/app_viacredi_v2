@@ -139,7 +139,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
                   
                   final numpadWidth = maxWidth > 600 ? 400.0 : maxWidth * 0.9;
                   final buttonWidth = numpadWidth / 5;
-                  final buttonHeight = buttonWidth * 0.6;
+                  final buttonHeight = buttonWidth * 0.55;
 
                   return Center(
                     child: SingleChildScrollView(
@@ -191,7 +191,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
                                     children: [
                                       for (var i = 0; i < 3; i++)
                                         Padding(
-                                          padding: EdgeInsets.symmetric(vertical: buttonHeight * 0.1),
+                                          padding: EdgeInsets.symmetric(vertical: buttonHeight * 0.08),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
@@ -205,7 +205,7 @@ class _NumpadScreenState extends State<NumpadScreen> {
                                           ),
                                         ),
                                       Padding(
-                                        padding: EdgeInsets.only(top: buttonHeight * 0.1),
+                                        padding: EdgeInsets.only(top: buttonHeight * 0.08),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
