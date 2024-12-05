@@ -21,7 +21,6 @@ class BackgroundContainer extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Logo com tamanho máximo
           Positioned(
             top: screenHeight * 0.02,
             left: 0,
@@ -29,8 +28,8 @@ class BackgroundContainer extends StatelessWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxWidth: 400, // Largura máxima do logo
-                  maxHeight: 120, // Altura máxima do logo
+                  maxWidth: 400,
+                  maxHeight: 120,
                 ),
                 child: SizedBox(
                   width: screenWidth * 0.4,
@@ -46,14 +45,13 @@ class BackgroundContainer extends StatelessWidget {
             ),
           ),
           
-          // Desenho com tamanho máximo
           Positioned(
             top: -25,
             right: -10,
             child: ConstrainedBox(
               constraints: const BoxConstraints(
-                maxWidth: 200, // Largura máxima do desenho
-                maxHeight: 200, // Altura máxima do desenho
+                maxWidth: 200,
+                maxHeight: 200,
               ),
               child: SizedBox(
                 width: screenWidth * 0.15,

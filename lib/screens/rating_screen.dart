@@ -74,18 +74,17 @@ class _RatingScreenState extends State<RatingScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 40), // Aumentado espaçamento
-
-                      // Grid com altura aumentada
+                      const SizedBox(height: 40),
+                      
                       SizedBox(
                         width: gridWidth,
-                        height: 130, // Aumentada altura do grid
+                        height: 130, 
                         child: GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 11,
-                            mainAxisSpacing: 8, // Aumentado espaçamento
-                            crossAxisSpacing: 8, // Aumentado espaçamento
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
                             childAspectRatio: 1,
                           ),
                           itemCount: 11,
@@ -110,7 +109,7 @@ class _RatingScreenState extends State<RatingScreen> {
                               child: FittedBox(
                                 fit: BoxFit.contain,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(12.0), // Aumentado padding
+                                  padding: const EdgeInsets.all(12.0),
                                   child: Text(
                                     index.toString(),
                                     style: const TextStyle(
@@ -126,7 +125,7 @@ class _RatingScreenState extends State<RatingScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 0), // Aumentado espaçamento
+                      const SizedBox(height: 0),
 
                       SizedBox(
                         width: gridWidth * 0.3,

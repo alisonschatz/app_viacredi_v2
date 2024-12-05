@@ -1,40 +1,46 @@
-# App_Viacredi
+# Feedback_Viacredi  
 
-## Descrição
-Este aplicativo móvel, desenvolvido em Flutter, simula a experiência de um totem de avaliação presente nas agências da Viacredi. Ele permite que os cooperados avaliem diversos aspectos do atendimento e do ambiente físico das agências, fornecendo um feedback valioso para a cooperativa.
+**🌐 Deploy disponível para teste:** [Feedback Viacredi](https://feedback-viacredi.vercel.app)  
 
-## Funcionalidades Principais
-- **Avaliação Geral**: Permite que o usuário avalie sua experiência geral em indicar a Viacredi para amigos e familiares, utilizando uma escala de 0 a 10.
-- **Avaliação Detalhada**: Oferece uma barra de estrelas para avaliar:
-  - Ambiente do posto de atendimento
-  - Atendimento dos colaboradores
-  - Tempo de espera
-- **Opção de Anonimato**: O usuário pode escolher se deseja fornecer seu CPF para personalizar a avaliação ou manter o anonimato.
-- **Campo para Comentários**: Permite que o usuário deixe comentários adicionais sobre sua experiência.
+---
 
-## Tecnologias Utilizadas
-- **Flutter**: Framework para desenvolvimento de aplicativos móveis multiplataforma.
-- **Dart**: Linguagem de programação utilizada pelo Flutter.
+## 📖 **Descrição**  
 
-## Como Executar o Projeto
+O **Feedback_Viacredi** é um aplicativo móvel desenvolvido em **Flutter**, projetado para simular a experiência de um totem de avaliação utilizado nas agências da **Viacredi**. Ele permite que os cooperados compartilhem feedback valioso, avaliando aspectos importantes do atendimento e do ambiente das agências.  
 
-### Pré-requisitos
-- **Flutter**: Certifique-se de ter o Flutter instalado e configurado em seu ambiente.
-- **Editor de Código**: Visual Studio Code, Android Studio ou outro de sua preferência.
+---
 
-### Passos para Execução
-1. **Clonar o Repositório**:
-   ```bash
-   git clone https://github.com/alisonschatz/app_viacredi_v2
+## ✨ **Funcionalidades Principais**  
 
+- **Avaliação Geral**  
+  Avalie sua experiência geral ao recomendar a Viacredi para amigos e familiares, utilizando uma escala de 0 a 10.  
 
-2. **Instalar as Dependências:**:
-   ```bash
-   cd app_viacredi
-    flutter pub get
+- **Avaliação Detalhada**  
+  Realize avaliações específicas com uma barra de estrelas para os seguintes aspectos:  
+  - Ambiente do posto de atendimento  
+  - Atendimento dos colaboradores  
+  - Tempo de espera  
 
+- **Opção de Anonimato**  
+  Escolha entre fornecer seu CPF para uma avaliação personalizada ou manter o anonimato.  
 
-3. **Executar o Aplicativo:**:
-   ```bash
-   flutter run
+- **Comentários**  
+  Compartilhe sugestões ou observações adicionais em um campo de texto dedicado.  
 
+---
+
+## 🛠️ **Tecnologias Utilizadas**  
+
+- **Flutter**: Framework para o desenvolvimento de aplicativos multiplataforma.  
+- **Dart**: Linguagem de programação utilizada no Flutter.  
+- **Firebase**: Utilizado para coletar e armazenar os dados de feedback.  
+
+---
+
+## 📊 **Dashboard de Visualização**  
+
+Os dados coletados são exibidos em um **dashboard** interativo, disponível em:  
+[Dashboard Viacredi](https://dashboard-viacredi.vercel.app)  
+
+📁 **Repositório do Dashboard**  
+Para mais detalhes sobre o dashboard, visite o repositório: [dashboard_viacredi](https://github.com/alisonschatz/dashboard_viacredi).  

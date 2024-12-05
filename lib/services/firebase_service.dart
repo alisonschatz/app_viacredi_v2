@@ -7,7 +7,7 @@ class FirebaseService {
 
   Future<void> saveFeedback(FeedbackData feedback) async {
     try {
-      // Criar uma coleção 'feedback' e dentro dela uma coleção com o ano e mês atual
+      // Cria uma coleção 'feedback' e dentro dela uma coleção com o ano e mês atual
       final now = DateTime.now();
       final yearMonth = '${now.year}_${now.month.toString().padLeft(2, '0')}';
       

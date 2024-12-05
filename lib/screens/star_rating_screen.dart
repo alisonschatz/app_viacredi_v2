@@ -56,7 +56,6 @@ class _StarRatingScreenState extends State<StarRatingScreen> {
               ),
               child: Stack(
                 children: [
-                  // Elemento decorativo
                   Positioned(
                     top: -25,
                     right: -10,

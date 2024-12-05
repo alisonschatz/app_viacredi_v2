@@ -87,7 +87,7 @@ class _CommentScreenState extends State<CommentScreen> {
                   final screenHeight = constraints.maxHeight;
                   final maxWidth = screenWidth > 1200 ? 1200.0 : screenWidth * 0.9;
                   final titleSize = (screenWidth * 0.035).clamp(32.0, 44.0);
-                  final buttonHeight = 45.0;
+                  const buttonHeight = 45.0;
                   
                   return SingleChildScrollView(
                     child: Center(
